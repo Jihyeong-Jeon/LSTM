@@ -180,7 +180,8 @@ class DataGeneratorSeq(object):
         self._prices_length = len(self._prices) - num_unroll
         self._batch_size = batch_size
         self._num_unroll = num_unroll
-        self._segments = self._prices_length //self._batch_size
+        self._segments = self._prices_length //self._batch_size # // floor division(몫값 반환) ** exponentiation
+        # segments == N/b (number of batches)
         self._cursor = [offset * self._segments for offset in range(self._batch_size)]
 
     def next_batch(self):
@@ -189,12 +190,13 @@ class DataGeneratorSeq(object):
         batch_labels = np.zeros((self._batch_size),dtype=np.float32)
 
         for b in range(self._batch_size):
-            if self._cursor[b]+1>=self._prices_length:
-                #self._cursor[b] = b * self._segments
+            if self._cursor[b]+1>=self._prices_length: # if cursor goes over the range
+                # self._cursor[b] = b * self._segments
                 self._cursor[b] = np.random.randint(0,(b+1)*self._segments)
+                # randomly select index from 0 to largest index
 
             batch_data[b] = self._prices[self._cursor[b]]
-            batch_labels[b]= self._prices[self._cursor[b]+np.random.randint(0,5)]
+            batch_labels[b]= self._prices[self._cursor[b]+np.random.randint(0,5)] # label을 그 값의 앞으로 0-5번째 값으로 선택
 
             self._cursor[b] = (self._cursor[b]+1)%self._prices_length
 
