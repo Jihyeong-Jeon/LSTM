@@ -10,7 +10,7 @@ import tensorflow as tf # This code has been tested with TensorFlow 1.6
 from sklearn.preprocessing import MinMaxScaler
 
 data_source = 'kaggle' # alphavantage or kaggle
-
+#tf.nn.softmax()
 if data_source == 'alphavantage':
     # ====================== Loading Data from Alpha Vantage ==================================
 
@@ -273,7 +273,8 @@ for li in range(n_layers):
   h.append(tf.Variable(tf.zeros([batch_size, num_nodes[li]]), trainable=False))
   initial_state.append(tf.contrib.rnn.LSTMStateTuple(c[li], h[li]))
 
-# Do several tensor transofmations, because the function dynamic_rnn requires the output to be of
+
+# Do several tensor transformations, because the function dynamic_rnn requires the output to be of
 # a specific format. Read more at: https://www.tensorflow.org/api_docs/python/tf/nn/dynamic_rnn
 all_inputs = tf.concat([tf.expand_dims(t,0) for t in train_inputs],axis=0)
 
@@ -344,7 +345,7 @@ with tf.control_dependencies([tf.assign(sample_c[li],sample_state[li][0]) for li
 
 print('\tAll done')
 
-epochs = 30
+epochs = 100 # probable set to 3000
 valid_summary = 1 # Interval you make test predictions
 
 n_predict_once = 50 # Number of steps you continously predict for
@@ -475,8 +476,8 @@ for ep in range(epochs):
       predictions_over_time.append(predictions_seq)
       print('\tFinished Predictions')
 
-best_prediction_epoch = 25 # replace this with the epoch that you got the best results when running the plotting code
-
+best_prediction_epoch = 80 # replace this with the epoch that you got the best results when running the plotting code
+# change this if the epoch concludes to over-fitting problem. change this with ADAM, Xavier initialization
 plt.figure(figsize = (18,18))
 plt.subplot(2,1,1)
 plt.plot(range(df.shape[0]),all_mid_data,color='b')
