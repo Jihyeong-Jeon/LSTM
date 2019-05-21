@@ -13,8 +13,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/driver.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-261">
-              <caret line="479" column="25" selection-start-line="479" selection-start-column="25" selection-end-line="479" selection-end-column="25" />
+            <state relative-caret-position="195">
+              <caret line="503" lean-forward="true" selection-start-line="503" selection-end-line="503" />
               <folding>
                 <element signature="e#120#151#0" expanded="true" />
               </folding>
@@ -73,7 +73,7 @@
       </list>
     </option>
   </component>
-  <component name="ProjectFrameBounds">
+  <component name="ProjectFrameBounds" extendedState="1">
     <option name="x" value="-7" />
     <option name="width" value="991" />
     <option name="height" value="867" />
@@ -212,7 +212,7 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="-7" y="0" width="991" height="867" extended-state="0" />
+    <frame x="-7" y="0" width="991" height="867" extended-state="1" />
     <layout>
       <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.18467996" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
@@ -264,8 +264,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/driver.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-261">
-          <caret line="479" column="25" selection-start-line="479" selection-start-column="25" selection-end-line="479" selection-end-column="25" />
+        <state relative-caret-position="195">
+          <caret line="503" lean-forward="true" selection-start-line="503" selection-end-line="503" />
           <folding>
             <element signature="e#120#151#0" expanded="true" />
           </folding>
