@@ -1,12 +1,10 @@
-# Make sure that you have all these libaries available to run the code successfully
-#from pandas_datareader import data
 import matplotlib.pyplot as plt
 import pandas as pd
 import datetime as dt
 import urllib.request, json
 import os
 import numpy as np
-import tensorflow as tf # This code has been tested with TensorFlow 1.6
+import tensorflow as tf #TensorFlow 1.6
 from sklearn.preprocessing import MinMaxScaler
 
 data_source = 'kaggle' # alphavantage or kaggle
@@ -25,9 +23,6 @@ if data_source == 'alphavantage':
     # Save data to this file
     file_to_save = 'stock_market_data-%s.csv'%ticker
 
-    # If you haven't already saved data,
-    # Go ahead and grab the data from the url
-    # And store date, low, high, volume, close, open values to a Pandas DataFrame
     if not os.path.exists(file_to_save):
         with urllib.request.urlopen(url_string) as url:
             data = json.loads(url.read().decode())
@@ -51,8 +46,6 @@ if data_source == 'alphavantage':
 else:
 
     # ====================== Loading Data from Kaggle ==================================
-    # You will be using HP's data. Feel free to experiment with other data.
-    # But while doing so, be careful to have a large enough dataset and also pay attention to the data normalization
     df = pd.read_csv(os.path.join('../Stocks','hpq.us.txt'),delimiter=',',usecols=['Date','Open','High','Low','Close'])
     print('Loaded data from the Kaggle repository')
 
@@ -78,8 +71,6 @@ train_data = mid_prices[:11000]
 test_data = mid_prices[11000:]
 
 # Scale the data to be between 0 and 1
-# When scaling remember! You normalize both test and train data with respect to training data
-# Because you are not supposed to have access to test data
 scaler = MinMaxScaler()
 train_data = train_data.reshape(-1,1)
 test_data = test_data.reshape(-1,1)
@@ -90,7 +81,7 @@ for di in range(0,10000,smoothing_window_size):
     scaler.fit(train_data[di:di+smoothing_window_size,:])
     train_data[di:di+smoothing_window_size,:] = scaler.transform(train_data[di:di+smoothing_window_size,:])
 
-# You normalize the last bit of remaining data
+# Normalize the last bit of remaining data
 scaler.fit(train_data[di+smoothing_window_size:,:])
 train_data[di+smoothing_window_size:,:] = scaler.transform(train_data[di+smoothing_window_size:,:])
 
@@ -100,8 +91,7 @@ train_data = train_data.reshape(-1)
 # Normalize test data
 test_data = scaler.transform(test_data).reshape(-1)
 
-# Now perform exponential moving average smoothing
-# So the data will have a smoother curve than the original ragged data
+# perform exponential moving average smoothing
 EMA = 0.0
 gamma = 0.1
 for ti in range(11000):
@@ -238,12 +228,12 @@ num_nodes = [200,200,150] # Number of hidden nodes in each layer of the deep LST
 n_layers = len(num_nodes) # number of layers
 dropout = 0.2 # dropout amount
 
-tf.reset_default_graph() # This is important in case you run this multiple times
+tf.reset_default_graph()
 
 # Input data.
 train_inputs, train_outputs = [],[]
 
-# You unroll the input over time defining placeholders for each time step
+# Unroll the input over time defining placeholders for each time step
 for ui in range(num_unrollings):
     train_inputs.append(tf.placeholder(tf.float32, shape=[batch_size,D],name='train_inputs_%d'%ui))
     train_outputs.append(tf.placeholder(tf.float32, shape=[batch_size,1], name = 'train_outputs_%d'%ui))
@@ -274,8 +264,6 @@ for li in range(n_layers):
   initial_state.append(tf.contrib.rnn.LSTMStateTuple(c[li], h[li]))
 
 
-# Do several tensor transformations, because the function dynamic_rnn requires the output to be of
-# a specific format. Read more at: https://www.tensorflow.org/api_docs/python/tf/nn/dynamic_rnn
 all_inputs = tf.concat([tf.expand_dims(t,0) for t in train_inputs],axis=0)
 
 # all_outputs is [seq_length, batch_size, num_nodes]
@@ -288,10 +276,6 @@ all_lstm_outputs = tf.reshape(all_lstm_outputs, [batch_size*num_unrollings,num_n
 all_outputs = tf.nn.xw_plus_b(all_lstm_outputs,w,b)
 
 split_outputs = tf.split(all_outputs,num_unrollings,axis=0)
-
-# When calculating the loss you need to be careful about the exact form, because you calculate
-# loss of all the unrolled steps at the same time
-# Therefore, take the mean error or each batch and get the sum of that over all the unrolled steps
 
 print('Defining training Loss')
 loss = 0.0
@@ -346,9 +330,9 @@ with tf.control_dependencies([tf.assign(sample_c[li],sample_state[li][0]) for li
 print('\tAll done')
 
 epochs = 100 # probable set to 3000
-valid_summary = 1 # Interval you make test predictions
+valid_summary = 1 
 
-n_predict_once = 50 # Number of steps you continously predict for
+n_predict_once = 50 # Number of steps 
 
 train_seq_length = train_data.size # Full length of the training data
 
@@ -372,7 +356,7 @@ data_gen = DataGeneratorSeq(train_data,batch_size,num_unrollings)
 
 x_axis_seq = []
 
-# Points you start your test predictions from
+# Start test predictions from
 test_points_seq = np.arange(11000,12000,50).tolist()
 
 for ep in range(epochs):
@@ -476,7 +460,7 @@ for ep in range(epochs):
       predictions_over_time.append(predictions_seq)
       print('\tFinished Predictions')
 
-best_prediction_epoch = 80 # replace this with the epoch that you got the best results when running the plotting code
+best_prediction_epoch = 80 
 # change this if the epoch concludes to over-fitting problem. change this with ADAM, Xavier initialization
 plt.figure(figsize = (18,18))
 plt.subplot(2,1,1)
@@ -497,7 +481,6 @@ plt.xlim(11000,12500)
 
 plt.subplot(2,1,2)
 
-# Predicting the best test prediction you got
 plt.plot(range(df.shape[0]),all_mid_data,color='b')
 for xval,yval in zip(x_axis_seq,predictions_over_time[best_prediction_epoch]):
     plt.plot(xval,yval,color='r')
